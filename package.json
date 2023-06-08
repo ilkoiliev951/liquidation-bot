@@ -44,6 +44,7 @@
     "typescript": "^5.0.4",
     "@aave/core-v3": "^1.17.2",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",
-    "@aave/protocol-js": "^4.3.0"
+    "@aave/protocol-js": "^4.3.0",
+    "@aave/periphery-v3": "^3.0.1"
   }
 }

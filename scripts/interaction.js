@@ -8,6 +8,7 @@ const secrets = require('./../secrets.json');
 
 const provider = new ethers.providers.WebSocketProvider(`wss://eth-mainnet.g.alchemy.com/v2/BI6S9cHE37Gg9VPYPSlMtxH07mkd8nhe`)
 const poolContract = new ethers.Contract('0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2', poolAbi.abi, provider)
+const poolDataProviderContract = new ethers.Contract('0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2', poolAbi.abi, provider)
 
 async function main() {
     poolContract.on('Borrow', (eventName, event, user) => {
@@ -19,41 +20,56 @@ async function main() {
         let userAddress = JSON.stringify(user);
         determineHFAndExecution (userAddress);
     });
-
-    poolContract.on('ReserveUsedAsCollateralEnabled', (eventName, event) => {
-        console.log('ReserveUsedAsCollateralEnabled')
-        let userAddress = JSON.stringify(user);
-        determineHFAndExecution (userAddress);
-    });
-
-    poolContract.on('ReserveUsedAsCollateralDisabled', (eventName, event) => {
-        console.log('ReserveUsedAsCollateralDisabled')
-        let userAddress = JSON.stringify(user);
-        determineHFAndExecution (userAddress);
-    });
-
-    poolContract.on('Repay', (eventName, event) => {
-        console.log('Repay')
-        let userAddress = JSON.stringify(user);
-        determineHFAndExecution(userAddress);
-    });
-
-    poolContract.on('Withdraw', (eventName, event, user) => {
-        console.log('Withdraw')
-        let userAddress = JSON.stringify(user);
-        determineHFAndExecution (userAddress);
-    });
 }
 
 async function determineHFAndExecution (userAddress) {
     // extract, convert, assert hf to be below zero
-    const tx =  await poolContract.getUserAccountData()
-
+    try {
+        const tx = await poolContract.getUserAccountData()
+        const userHF = convertHexToDec(tx.healthFactor.__hex)
+        if (userHF < 1.0) {
+            const tx = await poolDataProviderContract.getUserReservesData();
+        }
+    } catch (e) {
+        console.error(e)
+    }
 }
 
 async function liquidate (collateralAsset, debtAsset, targetUser, debtToCover, receiveAToken) {
 
 
+}
+
+function convertHexToDec (hexValue) {
+    let num=new BigNumber(h2d(hexValue))
+    let denom = new BigNumber(10).pow(16)
+    return num.dividedBy(denom).toNumber()
+}
+
+
+function h2d(s) {
+    function add(x, y) {
+        var c = 0, r = [];
+        var x = x.split('').map(Number);
+        var y = y.split('').map(Number);
+        while(x.length || y.length) {
+            var s = (x.pop() || 0) + (y.pop() || 0) + c;
+            r.unshift(s < 10 ? s : s - 10);
+            c = s < 10 ? 0 : 1;
+        }
+        if(c) r.unshift(c);
+        return r.join('');
+    }
+
+    var dec = '0';
+    s.split('').forEach(function(chr) {
+        var n = parseInt(chr, 16);
+        for(var t = 8; t; t >>= 1) {
+            dec = add(dec, dec);
+            if(n & t) dec = add(dec, '1');
+        }
+    });
+    return dec;
 }
 
 function getLiquidationContract() {
