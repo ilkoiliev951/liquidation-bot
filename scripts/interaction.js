@@ -1,34 +1,36 @@
 const ethers = require('ethers')
 
 const poolAbi = require('./../abis/PoolAbi.json')
+const poolProviderAbi = require('./../abis/PoolDataProvider.json')
 const liquidationContract = require("./../artifacts/contracts/LiquidationArb.sol/FlashLoan.json");
 
 const process = require("process");
 const secrets = require('./../secrets.json');
+const BigNumber = require('bignumber.js');
 
 const provider = new ethers.providers.WebSocketProvider(`wss://eth-mainnet.g.alchemy.com/v2/BI6S9cHE37Gg9VPYPSlMtxH07mkd8nhe`)
 const poolContract = new ethers.Contract('0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2', poolAbi.abi, provider)
-const poolDataProviderContract = new ethers.Contract('0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2', poolAbi.abi, provider)
+const poolDataProviderContract = new ethers.Contract('0x91c0eA31b49B69Ea18607702c5d9aC360bf3dE7d', poolProviderAbi.abi, provider)
 
 async function main() {
     poolContract.on('Borrow', (eventName, event, user) => {
-        let userAddress = JSON.stringify(user);
-        determineHFAndExecution (userAddress);
+        determineHFAndExecution(user);
     });
 
-    poolContract.on('Supply', (eventName, event) => {
-        let userAddress = JSON.stringify(user);
-        determineHFAndExecution (userAddress);
+    poolContract.on('Supply', (eventName, event, user) => {
+        determineHFAndExecution(user);
     });
 }
 
 async function determineHFAndExecution (userAddress) {
     // extract, convert, assert hf to be below zero
     try {
-        const tx = await poolContract.getUserAccountData()
+        const tx = await poolContract.getUserAccountData(userAddress)
         const userHF = convertHexToDec(tx.healthFactor.__hex)
+        console.log(userAddress)
+        console.log(userHF)
         if (userHF < 1.0) {
-            const tx = await poolDataProviderContract.getUserReservesData();
+            //const tx = await poolDataProviderContract.getUserReservesData();
         }
     } catch (e) {
         console.error(e)
@@ -41,11 +43,10 @@ async function liquidate (collateralAsset, debtAsset, targetUser, debtToCover, r
 }
 
 function convertHexToDec (hexValue) {
-    let num=new BigNumber(h2d(hexValue))
+    let num= new BigNumber(h2d(hexValue))
     let denom = new BigNumber(10).pow(16)
     return num.dividedBy(denom).toNumber()
 }
-
 
 function h2d(s) {
     function add(x, y) {
