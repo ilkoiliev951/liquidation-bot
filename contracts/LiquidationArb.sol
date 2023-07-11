@@ -4,12 +4,15 @@ import {FlashLoanSimpleReceiverBase} from "@aave/core-v3/contracts/flashloan/bas
 import {IPoolAddressesProvider} from "@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol";
 import {IERC20} from "@aave/core-v3/contracts/dependencies/openzeppelin/contracts/IERC20.sol";
 import {Pool} from "@aave/core-v3/contracts/protocol/pool/Pool.sol";
+import {PoolAddressesProvider} from "@aave/core-v3/contracts/protocol/configuration/PoolAddressesProvider.sol";
+import {UiPoolDataProviderV3} from "@aave/periphery-v3/contracts/misc/UiPoolDataProviderV3.sol";
 
 contract FlashLoan is FlashLoanSimpleReceiverBase {
     address payable owner;
     Pool private lendingPool;
     address private constant LENDING_POOL_ADDRESS = 0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2;
 
+    receive() external payable {}
 
     constructor() FlashLoanSimpleReceiverBase(IPoolAddressesProvider(LENDING_POOL_ADDRESS)) {
         owner = payable(msg.sender);
@@ -64,6 +67,4 @@ contract FlashLoan is FlashLoanSimpleReceiverBase {
         );
         _;
     }
-
-    receive() external payable {}
 }

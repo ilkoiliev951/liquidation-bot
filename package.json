@@ -1,17 +1,18 @@
 {
-  "name": "liquidation-arbitrage-bot",
+  "name": "lime-academy-final-project-evm-bridge",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "interact": "npx nodemon",
+    "bootAPI": "npx ts-node scripts/api/server.ts",
     "build": "hardhat compile",
     "test:light": "hardhat test",
     "test": "hardhat coverage"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/iliev95/lime-academy-main-task-week-0.git"
+    "url": "git+https://gitlab.com/iliev95/limeacademy-final-project.git"
   },
   "ts-node": {
     "compilerOptions": {
@@ -22,14 +23,15 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/iliev95/lime-academy-main-task-week-0/issues"
+    "url": "https://gitlab.com/iliev95/limeacademy-final-project.git/issues"
   },
-  "homepage": "https://gitlab.com/iliev95/lime-academy-main-task-week-0#readme",
+  "homepage": "https://gitlab.com/iliev95/limeacademy-final-project#readme",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.1",
     "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@nomiclabs/hardhat-waffle": "^2.0.5",
     "@openzeppelin/contracts": "^4.8.3",
+    "@types/express-session": "^1.17.3",
     "@typechain/ethers-v5": "^10.1.0",
     "@types/node": "^20.2.5",
     "ethers": "^5.7.2",
@@ -42,6 +44,14 @@
     "truffle": "^5.8.4",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4",
+    "web3": "^1.10.0",
+    "express": "^4.18.2",
+    "dotenv": "^16.1.4",
+    "typeorm": "^0.3.16",
+    "pg": "^8.11.0",
+    "request": "^2.88.2",
+    "fs": "^0.0.2",
+    "typeorm-extension": "^2.8.1",
     "@aave/core-v3": "^1.17.2",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",
     "@aave/protocol-js": "^4.3.0",
