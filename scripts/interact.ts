@@ -3,7 +3,7 @@ import {Pool} from "@aave/core-v3/dist/types/types";
 const ethers = require('ethers')
 const poolAbi = require('./../abis/PoolAbi.json')
 const poolProviderAbi = require('./../abis/PoolDataProvider.json')
-const liquidationContract = require("./../artifacts/contracts/LiquidationArb.sol/FlashLoan.json");
+const liquidationContract = require("./../artifacts/contracts/LiquidationArb.sol/LiquidationArb.json");
 
 const process = require("process");
 const secrets = require('./../secrets.json');
@@ -19,6 +19,7 @@ const wallet: Wallet = new Wallet(secrets.PRIVATE_KEY, provider);
 const poolContract: Pool = new ethers.Contract('0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2', poolAbi.abi, provider)
 const poolDataProviderContract: UiPoolDataProviderV3 = new ethers.Contract('0x91c0eA31b49B69Ea18607702c5d9aC360bf3dE7d', poolProviderAbi.abi, provider)
 
+// Liquidation Constants
 const DEFAULT_LIQUIDATION_CLOSE_FACTOR = 5000;
 const MAX_LIQUIDATION_CLOSE_FACTOR = 10000;
 const CLOSE_FACTOR_HF_THRESHOLD = 0.95;
@@ -31,7 +32,7 @@ export async function main() {
         await determineHFAndExecution(user);
     });
 
-    poolContract.on('Supply', async({user}) => {
+    poolContract.on('Supply', async (reserve, user) => {
         console.log('Intercepted supply')
         console.log('User: ' + user)
         await determineHFAndExecution(user);
@@ -76,6 +77,21 @@ async function determineHFAndExecution(userAddress: string) {
     } catch (e) {
         console.error(e)
     }
+}
+
+
+function calculateProfitability () {
+
+}
+
+function executeLiquidation (gas) {
+
+    // liquidationContract.
+}
+
+
+function calculateTransactionGasLimit () {
+
 }
 
 main().catch((error) => {

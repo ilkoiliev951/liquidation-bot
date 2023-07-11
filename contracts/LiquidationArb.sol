@@ -7,7 +7,7 @@ import {Pool} from "@aave/core-v3/contracts/protocol/pool/Pool.sol";
 import {PoolAddressesProvider} from "@aave/core-v3/contracts/protocol/configuration/PoolAddressesProvider.sol";
 import {UiPoolDataProviderV3} from "@aave/periphery-v3/contracts/misc/UiPoolDataProviderV3.sol";
 
-contract FlashLoan is FlashLoanSimpleReceiverBase {
+contract LiquidationArb is FlashLoanSimpleReceiverBase {
     address payable owner;
     Pool private lendingPool;
     address private constant LENDING_POOL_ADDRESS = 0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2;
